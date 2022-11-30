@@ -14,51 +14,49 @@ class DVRPEnv(Env):
         self.episode_limit = 200
 
     def step(self, actions):
-        return 1, {}
+        raise NotImplementedError
 
     def get_stats(self):
-        return {}
+        raise NotImplementedError
 
     def get_obs(self):
-        return []
+        raise NotImplementedError
 
     def get_obs_agent(self, agent_id):
-        # print(self.observations[agent_id].flatten().shape)
-        # print(self.get_obs_size())
-        return self.observations[agent_id].flatten()
+        raise NotImplementedError
 
     def get_obs_size(self):
-        return int(np.prod(next(iter(self.env.observation_spaces.values())).shape))
+        raise NotImplementedError
 
     def get_state(self):
-        return np.concatenate([self.get_obs_agent(o) for o in self.env.agents],axis=0)
+        raise NotImplementedError
 
     def get_state_size(self):
-        return  self.get_obs_size()*self.env.num_agents
+        raise NotImplementedError
 
     def get_avail_actions(self):
-        return [[1]*self.get_total_actions()]*self.n_agents
+        raise NotImplementedError
 
     def get_avail_agent_actions(self, agent_id):
-        return [1]*self.get_total_actions()
+        raise NotImplementedError
 
     def get_total_actions(self):
-        return self.num_discrete_acts
+        raise NotImplementedError
 
     def reset(self):
-        return self.get_obs(), self.get_state()
+        raise NotImplementedError
 
     def render(self):
-        pass
+        raise NotImplementedError
 
     def close(self):
-        pass
+        raise NotImplementedError
 
     def seed(self, seed):
         self.seed = seed
 
     def save_replay(self):
-        pass
+        raise NotImplementedError
 
     def get_env_info(self):
         env_info = {"state_shape": self.get_state_size(),
