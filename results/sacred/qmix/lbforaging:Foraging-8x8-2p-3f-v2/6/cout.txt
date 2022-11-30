@@ -1,0 +1,91 @@
+[INFO 14:42:14] pymarl Running command 'my_main'
+[INFO 14:42:14] pymarl Started run with ID "6"
+[DEBUG 14:42:14] pymarl Starting Heartbeat
+[DEBUG 14:42:14] my_main Started
+cuda
+[INFO 14:42:14] my_main Experiment Parameters:
+[INFO 14:42:14] my_main 
+
+{   'action_selector': 'epsilon_greedy',
+    'add_value_last_step': True,
+    'agent': 'rnn',
+    'agent_output_type': 'q',
+    'batch_size': 32,
+    'batch_size_run': 1,
+    'buffer_cpu_only': True,
+    'buffer_size': 5000,
+    'checkpoint_path': '',
+    'double_q': True,
+    'env': 'gymma',
+    'env_args': {   'key': 'lbforaging:Foraging-8x8-2p-3f-v2',
+                    'pretrained_wrapper': None,
+                    'seed': 107327085,
+                    'time_limit': 25},
+    'epsilon_anneal_time': 50000,
+    'epsilon_finish': 0.05,
+    'epsilon_start': 1.0,
+    'evaluate': False,
+    'evaluation_epsilon': 0.0,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hidden_dim': 64,
+    'hypergroup': None,
+    'hypernet_embed': 64,
+    'hypernet_layers': 2,
+    'label': 'default_label',
+    'learner': 'q_learner',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 50000,
+    'lr': 0.0005,
+    'mac': 'basic_mac',
+    'mixer': 'qmix',
+    'mixing_embed_dim': 32,
+    'name': 'qmix',
+    'obs_agent_id': True,
+    'obs_individual_obs': False,
+    'obs_last_action': False,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'repeat_id': 1,
+    'runner': 'episode',
+    'runner_log_interval': 10000,
+    'save_model': False,
+    'save_model_interval': 50000,
+    'save_replay': False,
+    'seed': 107327085,
+    'standardise_returns': False,
+    'standardise_rewards': True,
+    't_max': 2050000,
+    'target_update_interval_or_tau': 200,
+    'test_greedy': True,
+    'test_interval': 50,
+    'test_nepisode': 100,
+    'use_cuda': True,
+    'use_rnn': False,
+    'use_tensorboard': False}
+
+/home/renderhp/epymarl/pyenv/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+[INFO 14:42:15] my_main Beginning training for 2050000 timesteps
+/home/renderhp/epymarl/src/components/episode_buffer.py:103: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  v = th.tensor(v, dtype=dtype, device=self.device)
+/home/renderhp/epymarl/src/components/episode_buffer.py:103: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  v = th.tensor(v, dtype=dtype, device=self.device)
+[INFO 14:42:16] my_main t_env: 25 / 2050000
+[INFO 14:42:16] my_main Estimated time left: 4 hours, 48 minutes, 57 seconds. Time passed: 0 seconds
+[INFO 14:42:20] my_main t_env: 75 / 2050000
+[INFO 14:42:20] my_main Estimated time left: 1 days, 23 hours, 8 minutes, 33 seconds. Time passed: 4 seconds
+[INFO 14:42:24] my_main t_env: 125 / 2050000
+[INFO 14:42:24] my_main Estimated time left: 2 days, 2 hours, 50 minutes, 58 seconds. Time passed: 9 seconds
+[INFO 14:42:29] my_main t_env: 175 / 2050000
+[INFO 14:42:29] my_main Estimated time left: 2 days, 9 hours, 16 minutes, 54 seconds. Time passed: 14 seconds
+[INFO 14:42:35] my_main t_env: 225 / 2050000
+[INFO 14:42:35] my_main Estimated time left: 2 days, 10 hours, 51 minutes, 6 seconds. Time passed: 19 seconds
+[INFO 14:42:40] my_main t_env: 275 / 2050000
+[INFO 14:42:40] my_main Estimated time left: 2 days, 10 hours, 45 minutes, 10 seconds. Time passed: 24 seconds
+[INFO 14:42:45] my_main t_env: 325 / 2050000
+[INFO 14:42:45] my_main Estimated time left: 2 days, 10 hours, 49 minutes, 24 seconds. Time passed: 29 seconds
+[INFO 14:42:50] my_main t_env: 375 / 2050000
+[INFO 14:42:50] my_main Estimated time left: 2 days, 14 hours, 33 minutes, 31 seconds. Time passed: 35 seconds

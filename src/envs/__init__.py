@@ -9,18 +9,23 @@ from gym.envs import registry as gym_registry
 from gym.spaces import flatdim
 import numpy as np
 from gym.wrappers import TimeLimit as GymTimeLimit
+from gym.envs.registration import registry, register, make, spec
+from .dvrp_env import DVRPEnv
 
 def env_fn(env, **kwargs) -> MultiAgentEnv:
     return env(**kwargs)
 
 
-REGISTRY = {}
-REGISTRY["sc2"] = partial(env_fn, env=StarCraft2Env)
+# if sys.platform == "linux":
+#     os.environ.setdefault(
+#         "SC2PATH", os.path.join(os.getcwd(), "3rdparty", "StarCraftII")
+#     )
 
-if sys.platform == "linux":
-    os.environ.setdefault(
-        "SC2PATH", os.path.join(os.getcwd(), "3rdparty", "StarCraftII")
-    )
+register(
+  id="DVRPEnv-v0",                     # Environment ID.
+  entry_point="envs.dvrp_env:DVRPEnv",  # The entry point for the environment class
+#   kwargs={}   # Arguments that go to ForagingEnv's __init__ function.},
+)
 
 
 class TimeLimit(GymTimeLimit):
@@ -193,4 +198,5 @@ class _GymmaWrapper(MultiAgentEnv):
         return {}
 
 
+REGISTRY = {}
 REGISTRY["gymma"] = partial(env_fn, env=_GymmaWrapper)

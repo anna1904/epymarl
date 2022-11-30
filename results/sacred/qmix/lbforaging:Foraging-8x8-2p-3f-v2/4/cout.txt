@@ -1,0 +1,125 @@
+[INFO 14:37:23] pymarl Running command 'my_main'
+[INFO 14:37:23] pymarl Started run with ID "4"
+[DEBUG 14:37:23] pymarl Starting Heartbeat
+[DEBUG 14:37:23] my_main Started
+cuda
+[INFO 14:37:23] my_main Experiment Parameters:
+[INFO 14:37:23] my_main 
+
+{   'action_selector': 'epsilon_greedy',
+    'add_value_last_step': True,
+    'agent': 'rnn',
+    'agent_output_type': 'q',
+    'batch_size': 32,
+    'batch_size_run': 1,
+    'buffer_cpu_only': True,
+    'buffer_size': 5000,
+    'checkpoint_path': '',
+    'double_q': True,
+    'env': 'gymma',
+    'env_args': {   'key': 'lbforaging:Foraging-8x8-2p-3f-v2',
+                    'pretrained_wrapper': None,
+                    'seed': 996872131,
+                    'time_limit': 50},
+    'epsilon_anneal_time': 50000,
+    'epsilon_finish': 0.05,
+    'epsilon_start': 1.0,
+    'evaluate': False,
+    'evaluation_epsilon': 0.0,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hidden_dim': 64,
+    'hypergroup': None,
+    'hypernet_embed': 64,
+    'hypernet_layers': 2,
+    'label': 'default_label',
+    'learner': 'q_learner',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 50000,
+    'lr': 0.0005,
+    'mac': 'basic_mac',
+    'mixer': 'qmix',
+    'mixing_embed_dim': 32,
+    'name': 'qmix',
+    'obs_agent_id': True,
+    'obs_individual_obs': False,
+    'obs_last_action': False,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'repeat_id': 1,
+    'runner': 'episode',
+    'runner_log_interval': 10000,
+    'save_model': False,
+    'save_model_interval': 50000,
+    'save_replay': False,
+    'seed': 996872131,
+    'standardise_returns': False,
+    'standardise_rewards': True,
+    't_max': 2050000,
+    'target_update_interval_or_tau': 200,
+    'test_greedy': True,
+    'test_interval': 50,
+    'test_nepisode': 100,
+    'use_cuda': True,
+    'use_rnn': False,
+    'use_tensorboard': False}
+
+/home/renderhp/epymarl/pyenv/lib/python3.8/site-packages/gym/spaces/box.py:73: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  logger.warn(
+[INFO 14:37:25] my_main Beginning training for 2050000 timesteps
+/home/renderhp/epymarl/src/components/episode_buffer.py:103: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:230.)
+  v = th.tensor(v, dtype=dtype, device=self.device)
+/home/renderhp/epymarl/src/components/episode_buffer.py:103: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  v = th.tensor(v, dtype=dtype, device=self.device)
+[INFO 14:37:25] my_main t_env: 50 / 2050000
+[INFO 14:37:25] my_main Estimated time left: 3 hours, 48 minutes, 53 seconds. Time passed: 0 seconds
+[INFO 14:37:33] my_main t_env: 100 / 2050000
+[INFO 14:37:33] my_main Estimated time left: 3 days, 22 hours, 29 minutes, 58 seconds. Time passed: 8 seconds
+[INFO 14:37:43] my_main t_env: 150 / 2050000
+[INFO 14:37:43] my_main Estimated time left: 4 days, 11 hours, 13 minutes, 36 seconds. Time passed: 18 seconds
+[INFO 14:37:53] my_main t_env: 200 / 2050000
+[INFO 14:37:53] my_main Estimated time left: 4 days, 15 hours, 55 minutes, 10 seconds. Time passed: 28 seconds
+[INFO 14:38:02] my_main t_env: 250 / 2050000
+[INFO 14:38:02] my_main Estimated time left: 4 days, 13 hours, 18 minutes, 55 seconds. Time passed: 37 seconds
+[INFO 14:38:12] my_main t_env: 334 / 2050000
+[INFO 14:38:12] my_main Estimated time left: 2 days, 17 hours, 5 minutes, 35 seconds. Time passed: 47 seconds
+[INFO 14:38:22] my_main t_env: 384 / 2050000
+[INFO 14:38:22] my_main Estimated time left: 4 days, 14 hours, 53 minutes, 53 seconds. Time passed: 57 seconds
+[INFO 14:38:32] my_main t_env: 434 / 2050000
+[INFO 14:38:32] my_main Estimated time left: 4 days, 16 hours, 45 minutes, 16 seconds. Time passed: 1 minutes, 7 seconds
+[INFO 14:38:41] my_main t_env: 484 / 2050000
+[INFO 14:38:41] my_main Estimated time left: 4 days, 15 hours, 2 minutes, 40 seconds. Time passed: 1 minutes, 16 seconds
+[INFO 14:38:51] my_main t_env: 534 / 2050000
+[INFO 14:38:51] my_main Estimated time left: 4 days, 15 hours, 3 minutes, 39 seconds. Time passed: 1 minutes, 26 seconds
+[INFO 14:39:01] my_main t_env: 584 / 2050000
+[INFO 14:39:01] my_main Estimated time left: 4 days, 20 hours, 44 minutes, 31 seconds. Time passed: 1 minutes, 36 seconds
+[INFO 14:39:11] my_main t_env: 634 / 2050000
+[INFO 14:39:11] my_main Estimated time left: 4 days, 19 hours, 26 minutes, 15 seconds. Time passed: 1 minutes, 46 seconds
+[INFO 14:39:21] my_main t_env: 684 / 2050000
+[INFO 14:39:21] my_main Estimated time left: 4 days, 13 hours, 46 minutes, 58 seconds. Time passed: 1 minutes, 56 seconds
+[INFO 14:39:31] my_main t_env: 734 / 2050000
+[INFO 14:39:31] my_main Estimated time left: 4 days, 20 hours, 14 minutes, 56 seconds. Time passed: 2 minutes, 6 seconds
+[INFO 14:39:41] my_main t_env: 784 / 2050000
+[INFO 14:39:41] my_main Estimated time left: 4 days, 18 hours, 38 minutes, 5 seconds. Time passed: 2 minutes, 16 seconds
+[INFO 14:39:51] my_main t_env: 834 / 2050000
+[INFO 14:39:51] my_main Estimated time left: 4 days, 18 hours, 41 minutes, 16 seconds. Time passed: 2 minutes, 26 seconds
+[INFO 14:40:02] my_main t_env: 884 / 2050000
+[INFO 14:40:02] my_main Estimated time left: 4 days, 19 hours, 45 minutes, 1 seconds. Time passed: 2 minutes, 37 seconds
+[INFO 14:40:12] my_main t_env: 934 / 2050000
+[INFO 14:40:12] my_main Estimated time left: 4 days, 18 hours, 59 minutes, 26 seconds. Time passed: 2 minutes, 47 seconds
+[INFO 14:40:22] my_main t_env: 984 / 2050000
+[INFO 14:40:22] my_main Estimated time left: 4 days, 19 hours, 6 minutes, 49 seconds. Time passed: 2 minutes, 57 seconds
+[INFO 14:40:32] my_main t_env: 1034 / 2050000
+[INFO 14:40:32] my_main Estimated time left: 4 days, 19 hours, 27 minutes, 46 seconds. Time passed: 3 minutes, 7 seconds
+[INFO 14:40:42] my_main t_env: 1084 / 2050000
+[INFO 14:40:42] my_main Estimated time left: 4 days, 18 hours, 51 minutes, 11 seconds. Time passed: 3 minutes, 17 seconds
+[INFO 14:40:52] my_main t_env: 1134 / 2050000
+[INFO 14:40:52] my_main Estimated time left: 4 days, 18 hours, 46 minutes, 14 seconds. Time passed: 3 minutes, 27 seconds
+[INFO 14:41:02] my_main t_env: 1184 / 2050000
+[INFO 14:41:02] my_main Estimated time left: 4 days, 18 hours, 50 minutes, 31 seconds. Time passed: 3 minutes, 37 seconds
+[INFO 14:41:12] my_main t_env: 1234 / 2050000
+[INFO 14:41:12] my_main Estimated time left: 4 days, 18 hours, 39 minutes, 26 seconds. Time passed: 3 minutes, 47 seconds
+[INFO 14:41:22] my_main t_env: 1284 / 2050000
+[INFO 14:41:22] my_main Estimated time left: 4 days, 18 hours, 50 minutes, 58 seconds. Time passed: 3 minutes, 57 seconds

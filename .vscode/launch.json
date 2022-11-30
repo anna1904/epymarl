@@ -1,0 +1,21 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: main",
+            "type": "python",
+            "request": "launch",
+            "program": "src/main.py",
+            "args": [
+                "--config=qmix", 
+                // "--env-config=gymma", "with", "env_args.time_limit=25", "env_args.key='lbforaging:Foraging-8x8-2p-3f-v2'",
+                "--env-config=gymma", "with", "env_args.time_limit=25", "env_args.key='DVRPEnv-v0'",
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

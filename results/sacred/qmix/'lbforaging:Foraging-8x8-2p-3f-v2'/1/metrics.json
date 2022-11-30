@@ -1,0 +1,46 @@
+{
+  "ep_length_mean": {
+    "steps": [
+      25
+    ],
+    "timestamps": [
+      "2022-11-23T15:15:04.263583"
+    ],
+    "values": [
+      25.0
+    ]
+  },
+  "epsilon": {
+    "steps": [
+      25
+    ],
+    "timestamps": [
+      "2022-11-23T15:15:04.263594"
+    ],
+    "values": [
+      1.0
+    ]
+  },
+  "return_mean": {
+    "steps": [
+      25
+    ],
+    "timestamps": [
+      "2022-11-23T15:15:04.263447"
+    ],
+    "values": [
+      0.5
+    ]
+  },
+  "return_std": {
+    "steps": [
+      25
+    ],
+    "timestamps": [
+      "2022-11-23T15:15:04.263568"
+    ],
+    "values": [
+      0.0
+    ]
+  }
+}
