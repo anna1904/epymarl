@@ -1,0 +1,94 @@
+{
+  "artifacts": [],
+  "command": "my_main",
+  "experiment": {
+    "base_dir": "/Users/anko/Development/Imperial/dvrp_epymarl/epymarl/src",
+    "dependencies": [
+      "munch==2.5.0",
+      "numpy==1.23.5",
+      "PyYAML==5.3.1",
+      "sacred==0.8.2",
+      "torch==1.13.0"
+    ],
+    "mainfile": "main.py",
+    "name": "pymarl",
+    "repositories": [
+      {
+        "commit": "cb87d707a85f5ed54ecc2ee6c069e3df1f224a0d",
+        "dirty": true,
+        "url": "https://github.com/anna1904/epymarl.git"
+      },
+      {
+        "commit": "cb87d707a85f5ed54ecc2ee6c069e3df1f224a0d",
+        "dirty": true,
+        "url": "https://github.com/anna1904/epymarl.git"
+      },
+      {
+        "commit": "cb87d707a85f5ed54ecc2ee6c069e3df1f224a0d",
+        "dirty": true,
+        "url": "https://github.com/anna1904/epymarl.git"
+      }
+    ],
+    "sources": [
+      [
+        "main.py",
+        "_sources/main_eaaaa84deb905f7aaee470827f0cd7a8.py"
+      ],
+      [
+        "run.py",
+        "_sources/run_707db3ab6ebf9c6ae90cda50c32ad1cb.py"
+      ],
+      [
+        "utils/logging.py",
+        "_sources/logging_8309e899ab76a4e610428ba7ee8d8acb.py"
+      ]
+    ]
+  },
+  "heartbeat": "2022-12-09T00:36:17.097982",
+  "host": {
+    "ENV": {},
+    "cpu": "Apple M1",
+    "hostname": "Annas-MacBook-Air.local",
+    "os": [
+      "Darwin",
+      "macOS-12.5-arm64-i386-64bit"
+    ],
+    "python_version": "3.8.15"
+  },
+  "meta": {
+    "command": "my_main",
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false,
+      "COMMAND": null,
+      "UPDATE": [
+        "env_args.time_limit=50",
+        "env_args.key=DVRPEnv-v0"
+      ],
+      "help": false,
+      "with": true
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2022-12-09T00:36:10.439965",
+  "status": "INTERRUPTED",
+  "stop_time": "2022-12-09T00:36:17.099555"
+}

@@ -1,0 +1,112 @@
+[INFO 00:57:20] pymarl Running command 'my_main'
+[INFO 00:57:20] pymarl Started run with ID "10"
+[DEBUG 00:57:20] pymarl Starting Heartbeat
+[DEBUG 00:57:20] my_main Started
+[WARNING 00:57:20] my_main CUDA flag use_cuda was switched OFF automatically because no CUDA devices are available!
+cpu
+[INFO 00:57:20] my_main Experiment Parameters:
+[INFO 00:57:20] my_main 
+
+{   'action_selector': 'epsilon_greedy',
+    'add_value_last_step': True,
+    'agent': 'rnn',
+    'agent_output_type': 'q',
+    'batch_size': 32,
+    'batch_size_run': 1,
+    'buffer_cpu_only': True,
+    'buffer_size': 5000,
+    'checkpoint_path': '',
+    'double_q': True,
+    'env': 'gymma',
+    'env_args': {   'key': 'DVRPEnv-v0',
+                    'pretrained_wrapper': None,
+                    'seed': 32427630,
+                    'time_limit': 50},
+    'epsilon_anneal_time': 50000,
+    'epsilon_finish': 0.05,
+    'epsilon_start': 1.0,
+    'evaluate': False,
+    'evaluation_epsilon': 0.0,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hidden_dim': 64,
+    'hypergroup': None,
+    'hypernet_embed': 64,
+    'hypernet_layers': 2,
+    'label': 'default_label',
+    'learner': 'q_learner',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 50000,
+    'lr': 0.0005,
+    'mac': 'basic_mac',
+    'mixer': 'qmix',
+    'mixing_embed_dim': 32,
+    'name': 'qmix',
+    'obs_agent_id': True,
+    'obs_individual_obs': False,
+    'obs_last_action': False,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'repeat_id': 1,
+    'runner': 'episode',
+    'runner_log_interval': 10000,
+    'save_model': False,
+    'save_model_interval': 50000,
+    'save_replay': False,
+    'seed': 32427630,
+    'standardise_returns': False,
+    'standardise_rewards': True,
+    't_max': 2050000,
+    'target_update_interval_or_tau': 200,
+    'test_greedy': True,
+    'test_interval': 50,
+    'test_nepisode': 100,
+    'use_cuda': False,
+    'use_rnn': False,
+    'use_tensorboard': False}
+
+/Users/anko/miniforge3/envs/epymarl/lib/python3.8/site-packages/gym/logger.py:34: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  warnings.warn(colorize("%s: %s" % ("WARN", msg % args), "yellow"))
+[INFO 00:57:20] my_main Beginning training for 2050000 timesteps
+/Users/anko/Development/Imperial/dvrp_epymarl/epymarl/src/components/episode_buffer.py:103: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:233.)
+  v = th.tensor(v, dtype=dtype, device=self.device)
+/Users/anko/Development/Imperial/dvrp_epymarl/epymarl/src/components/episode_buffer.py:103: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  v = th.tensor(v, dtype=dtype, device=self.device)
+[INFO 00:57:20] my_main t_env: 50 / 2050000
+[INFO 00:57:20] my_main Estimated time left: 14 minutes, 51 seconds. Time passed: 0 seconds
+[INFO 00:57:21] my_main t_env: 100 / 2050000
+[INFO 00:57:21] my_main Estimated time left: 13 hours, 10 minutes, 57 seconds. Time passed: 1 seconds
+[INFO 00:57:22] my_main t_env: 150 / 2050000
+[INFO 00:57:22] my_main Estimated time left: 12 hours, 58 minutes, 48 seconds. Time passed: 2 seconds
+[INFO 00:57:24] my_main t_env: 200 / 2050000
+[INFO 00:57:24] my_main Estimated time left: 12 hours, 56 minutes, 26 seconds. Time passed: 3 seconds
+[INFO 00:57:25] my_main t_env: 250 / 2050000
+[INFO 00:57:25] my_main Estimated time left: 12 hours, 57 minutes, 16 seconds. Time passed: 4 seconds
+[INFO 00:57:26] my_main t_env: 300 / 2050000
+[INFO 00:57:26] my_main Estimated time left: 12 hours, 57 minutes, 2 seconds. Time passed: 5 seconds
+[INFO 00:57:27] my_main t_env: 350 / 2050000
+[INFO 00:57:27] my_main Estimated time left: 12 hours, 54 minutes, 28 seconds. Time passed: 6 seconds
+[INFO 00:57:28] my_main t_env: 400 / 2050000
+[INFO 00:57:28] my_main Estimated time left: 12 hours, 54 minutes, 42 seconds. Time passed: 8 seconds
+[INFO 00:57:29] my_main t_env: 450 / 2050000
+[INFO 00:57:29] my_main Estimated time left: 12 hours, 55 minutes, 17 seconds. Time passed: 9 seconds
+[INFO 00:57:30] my_main t_env: 500 / 2050000
+[INFO 00:57:30] my_main Estimated time left: 12 hours, 57 minutes, 8 seconds. Time passed: 10 seconds
+[INFO 00:57:32] my_main t_env: 550 / 2050000
+[INFO 00:57:32] my_main Estimated time left: 12 hours, 56 minutes, 37 seconds. Time passed: 11 seconds
+[INFO 00:57:33] my_main t_env: 600 / 2050000
+[INFO 00:57:33] my_main Estimated time left: 12 hours, 53 minutes, 30 seconds. Time passed: 12 seconds
+[INFO 00:57:34] my_main t_env: 650 / 2050000
+[INFO 00:57:34] my_main Estimated time left: 12 hours, 56 minutes, 1 seconds. Time passed: 13 seconds
+[INFO 00:57:35] my_main t_env: 700 / 2050000
+[INFO 00:57:35] my_main Estimated time left: 12 hours, 56 minutes, 49 seconds. Time passed: 14 seconds
+[INFO 00:57:36] my_main t_env: 750 / 2050000
+[INFO 00:57:36] my_main Estimated time left: 13 hours, 1 minutes, 34 seconds. Time passed: 15 seconds
+[INFO 00:57:37] my_main t_env: 800 / 2050000
+[INFO 00:57:37] my_main Estimated time left: 12 hours, 57 minutes, 51 seconds. Time passed: 17 seconds
+[INFO 00:57:38] my_main t_env: 850 / 2050000
+[INFO 00:57:38] my_main Estimated time left: 12 hours, 56 minutes, 32 seconds. Time passed: 18 seconds
+[INFO 00:57:39] my_main t_env: 900 / 2050000
+[INFO 00:57:39] my_main Estimated time left: 13 hours, 2 minutes, 32 seconds. Time passed: 19 seconds

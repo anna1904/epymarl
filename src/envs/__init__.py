@@ -24,7 +24,9 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
 register(
   id="DVRPEnv-v0",                     # Environment ID.
   entry_point="envs.dvrp_env:DVRPEnv",  # The entry point for the environment class
-#   kwargs={}   # Arguments that go to ForagingEnv's __init__ function.},
+  # kwargs={
+  #     "t_max":2000
+  #   },
 )
 
 

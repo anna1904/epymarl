@@ -1,0 +1,176 @@
+[INFO 00:38:56] pymarl Running command 'my_main'
+[INFO 00:38:56] pymarl Started run with ID "7"
+[DEBUG 00:38:56] pymarl Starting Heartbeat
+[DEBUG 00:38:56] my_main Started
+[WARNING 00:38:56] my_main CUDA flag use_cuda was switched OFF automatically because no CUDA devices are available!
+cpu
+[INFO 00:38:56] my_main Experiment Parameters:
+[INFO 00:38:56] my_main 
+
+{   'action_selector': 'epsilon_greedy',
+    'add_value_last_step': True,
+    'agent': 'rnn',
+    'agent_output_type': 'q',
+    'batch_size': 32,
+    'batch_size_run': 1,
+    'buffer_cpu_only': True,
+    'buffer_size': 5000,
+    'checkpoint_path': '',
+    'double_q': True,
+    'env': 'gymma',
+    'env_args': {   'key': 'DVRPEnv-v0',
+                    'pretrained_wrapper': None,
+                    'seed': 839857824,
+                    'time_limit': 50},
+    'epsilon_anneal_time': 50000,
+    'epsilon_finish': 0.05,
+    'epsilon_start': 1.0,
+    'evaluate': False,
+    'evaluation_epsilon': 0.0,
+    'gamma': 0.99,
+    'grad_norm_clip': 10,
+    'hidden_dim': 64,
+    'hypergroup': None,
+    'hypernet_embed': 64,
+    'hypernet_layers': 2,
+    'label': 'default_label',
+    'learner': 'q_learner',
+    'learner_log_interval': 10000,
+    'load_step': 0,
+    'local_results_path': 'results',
+    'log_interval': 50000,
+    'lr': 0.0005,
+    'mac': 'basic_mac',
+    'mixer': 'qmix',
+    'mixing_embed_dim': 32,
+    'name': 'qmix',
+    'obs_agent_id': True,
+    'obs_individual_obs': False,
+    'obs_last_action': False,
+    'optim_alpha': 0.99,
+    'optim_eps': 1e-05,
+    'repeat_id': 1,
+    'runner': 'episode',
+    'runner_log_interval': 10000,
+    'save_model': False,
+    'save_model_interval': 50000,
+    'save_replay': False,
+    'seed': 839857824,
+    'standardise_returns': False,
+    'standardise_rewards': True,
+    't_max': 2050000,
+    'target_update_interval_or_tau': 200,
+    'test_greedy': True,
+    'test_interval': 50,
+    'test_nepisode': 100,
+    'use_cuda': False,
+    'use_rnn': False,
+    'use_tensorboard': False}
+
+/Users/anko/miniforge3/envs/epymarl/lib/python3.8/site-packages/gym/logger.py:34: UserWarning: [33mWARN: Box bound precision lowered by casting to float32[0m
+  warnings.warn(colorize("%s: %s" % ("WARN", msg % args), "yellow"))
+[INFO 00:38:56] my_main Beginning training for 2050000 timesteps
+/Users/anko/Development/Imperial/dvrp_epymarl/epymarl/src/components/episode_buffer.py:103: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:233.)
+  v = th.tensor(v, dtype=dtype, device=self.device)
+/Users/anko/Development/Imperial/dvrp_epymarl/epymarl/src/components/episode_buffer.py:103: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  v = th.tensor(v, dtype=dtype, device=self.device)
+[INFO 00:38:56] my_main t_env: 50 / 2050000
+[INFO 00:38:56] my_main Estimated time left: 6 minutes, 12 seconds. Time passed: 0 seconds
+[INFO 00:38:58] my_main t_env: 100 / 2050000
+[INFO 00:38:58] my_main Estimated time left: 18 hours, 10 minutes, 41 seconds. Time passed: 1 seconds
+[INFO 00:38:59] my_main t_env: 150 / 2050000
+[INFO 00:38:59] my_main Estimated time left: 18 hours, 1 minutes, 10 seconds. Time passed: 3 seconds
+[INFO 00:39:01] my_main t_env: 200 / 2050000
+[INFO 00:39:01] my_main Estimated time left: 18 hours, 4 minutes, 6 seconds. Time passed: 4 seconds
+[INFO 00:39:03] my_main t_env: 250 / 2050000
+[INFO 00:39:03] my_main Estimated time left: 17 hours, 59 minutes, 49 seconds. Time passed: 6 seconds
+[INFO 00:39:04] my_main t_env: 300 / 2050000
+[INFO 00:39:04] my_main Estimated time left: 17 hours, 59 minutes, 0 seconds. Time passed: 7 seconds
+[INFO 00:39:06] my_main t_env: 350 / 2050000
+[INFO 00:39:06] my_main Estimated time left: 18 hours, 3 minutes, 19 seconds. Time passed: 9 seconds
+[INFO 00:39:07] my_main t_env: 400 / 2050000
+[INFO 00:39:07] my_main Estimated time left: 18 hours, 6 minutes, 54 seconds. Time passed: 11 seconds
+[INFO 00:39:09] my_main t_env: 450 / 2050000
+[INFO 00:39:09] my_main Estimated time left: 18 hours, 1 minutes, 13 seconds. Time passed: 12 seconds
+[INFO 00:39:11] my_main t_env: 500 / 2050000
+[INFO 00:39:11] my_main Estimated time left: 18 hours, 43 seconds. Time passed: 14 seconds
+[INFO 00:39:12] my_main t_env: 550 / 2050000
+[INFO 00:39:12] my_main Estimated time left: 17 hours, 59 minutes, 32 seconds. Time passed: 15 seconds
+[INFO 00:39:14] my_main t_env: 600 / 2050000
+[INFO 00:39:14] my_main Estimated time left: 17 hours, 58 minutes, 14 seconds. Time passed: 17 seconds
+[INFO 00:39:15] my_main t_env: 650 / 2050000
+[INFO 00:39:15] my_main Estimated time left: 17 hours, 59 minutes, 44 seconds. Time passed: 19 seconds
+[INFO 00:39:17] my_main t_env: 700 / 2050000
+[INFO 00:39:17] my_main Estimated time left: 18 hours, 6 minutes, 5 seconds. Time passed: 20 seconds
+[INFO 00:39:18] my_main t_env: 750 / 2050000
+[INFO 00:39:18] my_main Estimated time left: 17 hours, 58 minutes, 47 seconds. Time passed: 22 seconds
+[INFO 00:39:20] my_main t_env: 800 / 2050000
+[INFO 00:39:20] my_main Estimated time left: 17 hours, 59 minutes, 42 seconds. Time passed: 23 seconds
+[INFO 00:39:22] my_main t_env: 850 / 2050000
+[INFO 00:39:22] my_main Estimated time left: 18 hours, 6 minutes, 14 seconds. Time passed: 25 seconds
+[INFO 00:39:23] my_main t_env: 900 / 2050000
+[INFO 00:39:23] my_main Estimated time left: 18 hours, 58 seconds. Time passed: 26 seconds
+[INFO 00:39:25] my_main t_env: 950 / 2050000
+[INFO 00:39:25] my_main Estimated time left: 17 hours, 57 minutes, 58 seconds. Time passed: 28 seconds
+[INFO 00:39:26] my_main t_env: 1000 / 2050000
+[INFO 00:39:26] my_main Estimated time left: 18 hours, 4 minutes, 35 seconds. Time passed: 30 seconds
+[INFO 00:39:28] my_main t_env: 1050 / 2050000
+[INFO 00:39:28] my_main Estimated time left: 18 hours, 12 minutes, 13 seconds. Time passed: 31 seconds
+[INFO 00:39:30] my_main t_env: 1100 / 2050000
+[INFO 00:39:30] my_main Estimated time left: 17 hours, 57 minutes, 35 seconds. Time passed: 33 seconds
+[INFO 00:39:31] my_main t_env: 1150 / 2050000
+[INFO 00:39:31] my_main Estimated time left: 18 hours, 6 minutes, 28 seconds. Time passed: 34 seconds
+[INFO 00:39:33] my_main t_env: 1200 / 2050000
+[INFO 00:39:33] my_main Estimated time left: 17 hours, 59 minutes, 24 seconds. Time passed: 36 seconds
+[INFO 00:39:34] my_main t_env: 1250 / 2050000
+[INFO 00:39:34] my_main Estimated time left: 17 hours, 57 minutes, 3 seconds. Time passed: 38 seconds
+[INFO 00:39:36] my_main t_env: 1300 / 2050000
+[INFO 00:39:36] my_main Estimated time left: 18 hours, 2 minutes, 39 seconds. Time passed: 39 seconds
+[INFO 00:39:37] my_main t_env: 1350 / 2050000
+[INFO 00:39:37] my_main Estimated time left: 18 hours, 11 minutes, 56 seconds. Time passed: 41 seconds
+[INFO 00:39:39] my_main t_env: 1400 / 2050000
+[INFO 00:39:39] my_main Estimated time left: 17 hours, 58 minutes, 45 seconds. Time passed: 42 seconds
+[INFO 00:39:41] my_main t_env: 1450 / 2050000
+[INFO 00:39:41] my_main Estimated time left: 17 hours, 59 minutes, 46 seconds. Time passed: 44 seconds
+[INFO 00:39:42] my_main t_env: 1500 / 2050000
+[INFO 00:39:42] my_main Estimated time left: 18 hours, 9 minutes, 21 seconds. Time passed: 45 seconds
+[INFO 00:39:44] my_main t_env: 1550 / 2050000
+[INFO 00:39:44] my_main Estimated time left: 18 hours, 1 seconds. Time passed: 47 seconds
+[INFO 00:39:45] my_main t_env: 1600 / 2050000
+[INFO 00:39:45] my_main Estimated time left: 18 hours, 55 minutes, 6 seconds. Time passed: 49 seconds
+[INFO 00:39:47] my_main t_env: 1650 / 2050000
+[INFO 00:39:47] my_main Estimated time left: 18 hours, 47 minutes, 54 seconds. Time passed: 50 seconds
+[INFO 00:39:49] my_main t_env: 1700 / 2050000
+[INFO 00:39:49] my_main Estimated time left: 19 hours, 26 minutes, 29 seconds. Time passed: 52 seconds
+[INFO 00:39:50] my_main t_env: 1750 / 2050000
+[INFO 00:39:50] my_main Estimated time left: 18 hours, 23 minutes, 7 seconds. Time passed: 54 seconds
+[INFO 00:39:52] my_main t_env: 1800 / 2050000
+[INFO 00:39:52] my_main Estimated time left: 18 hours, 28 minutes, 58 seconds. Time passed: 55 seconds
+[INFO 00:39:54] my_main t_env: 1850 / 2050000
+[INFO 00:39:54] my_main Estimated time left: 19 hours, 21 minutes, 2 seconds. Time passed: 57 seconds
+[INFO 00:39:55] my_main t_env: 1900 / 2050000
+[INFO 00:39:55] my_main Estimated time left: 18 hours, 23 minutes, 17 seconds. Time passed: 59 seconds
+[INFO 00:39:57] my_main t_env: 1950 / 2050000
+[INFO 00:39:57] my_main Estimated time left: 18 hours, 51 minutes, 26 seconds. Time passed: 1 minutes, 0 seconds
+[INFO 00:39:59] my_main t_env: 2000 / 2050000
+[INFO 00:39:59] my_main Estimated time left: 18 hours, 22 minutes, 7 seconds. Time passed: 1 minutes, 2 seconds
+[INFO 00:40:00] my_main t_env: 2050 / 2050000
+[INFO 00:40:00] my_main Estimated time left: 18 hours, 21 minutes, 18 seconds. Time passed: 1 minutes, 4 seconds
+[INFO 00:40:02] my_main t_env: 2100 / 2050000
+[INFO 00:40:02] my_main Estimated time left: 18 hours, 24 minutes, 45 seconds. Time passed: 1 minutes, 5 seconds
+[INFO 00:40:04] my_main t_env: 2150 / 2050000
+[INFO 00:40:04] my_main Estimated time left: 18 hours, 21 minutes, 33 seconds. Time passed: 1 minutes, 7 seconds
+[INFO 00:40:05] my_main t_env: 2200 / 2050000
+[INFO 00:40:05] my_main Estimated time left: 18 hours, 27 minutes, 36 seconds. Time passed: 1 minutes, 8 seconds
+[INFO 00:40:07] my_main t_env: 2250 / 2050000
+[INFO 00:40:07] my_main Estimated time left: 18 hours, 46 minutes, 13 seconds. Time passed: 1 minutes, 10 seconds
+[INFO 00:40:08] my_main t_env: 2300 / 2050000
+[INFO 00:40:08] my_main Estimated time left: 18 hours, 46 minutes, 21 seconds. Time passed: 1 minutes, 12 seconds
+[INFO 00:40:10] my_main t_env: 2350 / 2050000
+[INFO 00:40:10] my_main Estimated time left: 18 hours, 31 minutes, 15 seconds. Time passed: 1 minutes, 13 seconds
+[INFO 00:40:12] my_main t_env: 2400 / 2050000
+[INFO 00:40:12] my_main Estimated time left: 18 hours, 32 minutes, 25 seconds. Time passed: 1 minutes, 15 seconds
+[INFO 00:40:13] my_main t_env: 2450 / 2050000
+[INFO 00:40:13] my_main Estimated time left: 18 hours, 35 minutes, 21 seconds. Time passed: 1 minutes, 17 seconds
+[INFO 00:40:15] my_main t_env: 2500 / 2050000
+[INFO 00:40:15] my_main Estimated time left: 18 hours, 30 minutes, 10 seconds. Time passed: 1 minutes, 18 seconds
