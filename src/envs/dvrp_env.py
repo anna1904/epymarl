@@ -72,8 +72,8 @@ class DVRPEnv(Env):
         self._total_appeared_orders = 0
 
         #Render parameters
-        self.icon_av, _ = draw_image('av.png')
-        self.icon_pkg, _ = draw_image('pin.png')
+        self.icon_av, _ = draw_image('rsz_1rsz_truck.png')
+        self.icon_pkg, _ = draw_image('rsz_1pin.png')
         # self.icon_pkg = self.icon_pkg.convert("RGBA")
         self.viewer = None
 
@@ -98,7 +98,6 @@ class DVRPEnv(Env):
 
 
     def step(self, actions):
-        self.render()
         vehicles_action = list(actions)
         self.vehicles_action_history.append(vehicles_action)
         self._step_count += 1
@@ -256,7 +255,8 @@ class DVRPEnv(Env):
             self.vehicles_pos[vehicle_i] = next_pos
 
 
-    def render(self):
+    def render(self, mode = 'human', close = False):
+
         img = copy.copy(self._base_img)
 
         # Agents
@@ -267,20 +267,29 @@ class DVRPEnv(Env):
         for idx, j in enumerate(self.order_status):
             if j != -1:
                 fill_cell_im(img, self.icon_pkg, self.orders_pos[idx], cell_size=CELL_SIZE)
+        # img.show()
 
-        self.images.append(img)
-        # img = np.asarray(img)
-        img.show()
-        img.save('gridworld.jpg', format='JPEG', subsampling=0, quality=100)
-
-        # from gym.envs.classic_control import rendering
-        # if self.viewer is None:
-        #     self.viewer = rendering.SimpleImageViewer()
-        #     self.viewer.imshow(img)
-        # return self.viewer.isopen
+        # self.images.append(img)
+        img = np.asarray(img)
+        # img.save('gridworld.jpg', format='JPEG', subsampling=0, quality=100)
+        from gym.envs.classic_control import rendering
+        if self.viewer is None:
+            self.viewer = rendering.SimpleImageViewer()
+        self.viewer.imshow(img)
+        # return self.viewer.render(return_rgb_array = mode=='rgb_array')
+        return self.viewer.isopen
 
     def close(self):
-        pass
+
+        if self.images is not False:
+            self.images[0].save(f'config/envs/results/1.gif', format='GIF',
+                                append_images=self.images[1:],
+                                save_all=True,
+                                duration=len(self.images) / 10, loop=0)
+
+        if self.viewer is not None:
+            self.viewer.close()
+            self.viewer = None
 
     def __draw_base_img(self):
         self._base_img = draw_grid(self._grid_shape[0], self._grid_shape[1], cell_size=CELL_SIZE, fill='white')

@@ -6,9 +6,14 @@ env_args:
   pretrained_wrapper: null
 
 test_greedy: True
-test_nepisode: 100
+test_nepisode: 1
 test_interval: 50
 log_interval: 50000
 runner_log_interval: 10000
 learner_log_interval: 10000
 t_max: 500
+checkpoint_path: "results/models/qmix_seed602284149_DVRPEnv-v0_2022-12-12 20:51:51.056310/"
+evaluate: True
+
+save_model: True # Save the models to disk
+save_model_interval: 100 # Save models after this many timesteps

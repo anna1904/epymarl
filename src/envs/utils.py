@@ -31,7 +31,7 @@ def load_graph(file_name):
 def draw_map(file_name):
     with open(file_name, "rb") as f:
         load = pickle.load(f)
-    fig, ax = plt.subplots(figsize=(50, 50))
+    fig, ax = plt.subplots(figsize=(10, 10))
     load[1].plot(ax=ax,alpha=0.2)
     fig.show()
     fig.canvas.draw()

@@ -53,7 +53,7 @@ def run(_run, _config, _log):
     logger.setup_sacred(_run)
 
     # Run and train
-    run_sequential(args=args, logger=logger)
+    run_sequential(args=args, logger=logger) #here is main
 
     # Clean up after finishing
     print("Exiting Main")
