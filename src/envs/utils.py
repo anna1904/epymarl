@@ -39,7 +39,7 @@ def draw_map(file_name):
 
 
 def draw_image(file_name):
-    im = Image.open(path+file_name)
+    im = Image.open(path+file_name).convert("RGBA")
     width, height = im.size
     scale_x = width / (xmax - xmin)
     scale_y = height / (ymax - ymin)

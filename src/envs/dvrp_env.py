@@ -13,11 +13,18 @@ from .draw import *
 
 # ACTION:
 # 0: Wait (Do nothing)
-# 1: Return to depot
-# 2: Deliver order i (by moving one step towards the respective delivery location)
+# 1 Accept the order
+# 2: Return to depot
+# 3: Deliver order i (by moving one step towards the respective delivery location)
+
+#ORDER STATUS:
+# -1: InACtive
+# 0: Available
+# 1: Accepted
+# 2: Delivered
 
 class DVRPEnv(Env):
-    def __init__(self, n_agents = 2, episode_limit=100, expected_orders=15, grid_shape=(10, 10)):
+    def __init__(self, n_agents = 2, episode_limit=50, expected_orders=4, grid_shape=(10, 10)):
         self.n_agents = n_agents 
         self._episode_length = episode_limit
         self._expected_orders = expected_orders
@@ -27,8 +34,7 @@ class DVRPEnv(Env):
         #rewards
         self.invalid_action_penalty = 5
         self.delivery_reward = 2
-
-
+        self.accept_reward = 1
 
         # General parameters (changes throughout episode)
         self._vehicle_episode_rewards = [0 for _ in range(self.n_agents)]
@@ -45,6 +51,8 @@ class DVRPEnv(Env):
         self.vehicles_pos = {_: (None, None) for _ in range(self.n_agents)}
         self._vehicle_dones = [False] * self.n_agents
         self._successful_delivery = 0
+        self._total_accepted_orders = 0
+        self._total_delivered_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
         self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
 
@@ -64,18 +72,21 @@ class DVRPEnv(Env):
         self.order_generation_window = self._episode_length   # time when orders can appear
         self.order_prob = self._expected_orders / self.order_generation_window  # set order probability such that the expected number of orders per day = total_orders
         self.generated_orders = 0
+        self.current_order_id = -1
 
         # Order parameters
         self.orders_pos = [(-1, -1)] * self.n_orders
         self.order_status = [-1] * self.n_orders
         self.order_time = [-1] * self.n_orders
+        self.order_vehicle = [-1] * self.n_orders #number of agent which accept an order
         self._total_appeared_orders = 0
 
         #Render parameters
         self.icon_av, _ = draw_image('rsz_1rsz_truck.png')
         self.icon_pkg, _ = draw_image('rsz_1pin.png')
-        # self.icon_pkg = self.icon_pkg.convert("RGBA")
+        self.icon_delivered, _ = draw_image('rsz_delivered.png')
         self.viewer = None
+        self.images = False
 
         # Create observation space
         self._obs_high = np.array([self.vehicle_x_max, self.vehicle_y_max] +
@@ -92,7 +103,7 @@ class DVRPEnv(Env):
         self.observation_space = MultiAgentObservationSpace(
             [spaces.Box(self._obs_low, self._obs_high) for _ in range(self.n_agents)])
 
-        self.action_max = 1 + self.n_orders + 1
+        self.action_max = 1 + 1 + 1 + self.n_orders#do nothing, accept order,  depot, move to order
 
         self.action_space = MultiAgentActionSpace([spaces.Discrete(self.action_max) for _ in range(self.n_agents)])
 
@@ -104,10 +115,14 @@ class DVRPEnv(Env):
         self._clock += 1
         self.rewards = [0] * self.n_agents
 
-        self.__update_orders()
-        self.__update_vehicles_pos(vehicles_action)
+        #no order available but vehicle drive there
 
-        if self._clock >= self._episode_length:
+        self.__generate_orders()
+        self.__update_action_1(vehicles_action)
+        self.__update_vehicles_pos(vehicles_action) #move either to depot, location
+        self.__update_rewards(vehicles_action) #give penalty a)to select unavailable order b) to stay in depot for next action
+
+        if self._clock >= self._episode_length or self.order_status.count(2) == self._expected_orders:
             for i in range(self.n_agents):
                 self._vehicle_dones[i] = True
 
@@ -115,16 +130,42 @@ class DVRPEnv(Env):
 
         return self.get_state(), self.rewards, self._vehicle_dones, {'ongoing': True}
 
-    def __update_orders(self):
-        if (self._clock < self.order_generation_window) and (self.generated_orders < self._expected_orders):
+    def __generate_orders(self):
+        if (self._clock < self.order_generation_window) and (self.generated_orders < self._expected_orders) and (self._clock % 10 == 1):
             order_x, order_y = self.__generate_order()
-            order_i = self.order_status.index(-1)
+            self.current_order_id = self.generated_orders
+            order_i = self.current_order_id
             # for order_i in range(self.n_orders):
             #     if self.order_status[order_i] == -1:
             self.generated_orders += 1
             self.order_time[order_i] = self._clock
             self.orders_pos[order_i] = (order_x, order_y)
             self.order_status[order_i] = 0
+
+    def __update_rewards(self, vehicles_action):
+        if self.order_status.count(2) == self._expected_orders:
+            self.rewards = [reward + 20 for reward in self.rewards]
+            return
+
+        for vehicle_i, vehicle_action in enumerate(vehicles_action):
+            if 3 <= vehicle_action <= self.action_max:
+                order_i = vehicle_action - 3
+                if self.order_status[order_i] == 1 and \
+                        self.vehicles_pos[vehicle_i] == self.orders_pos[order_i]:
+                    self._total_delivered_orders += 1
+                    self.rewards[vehicle_i] += self.delivery_reward  # give reward for successful delivery
+                    self._successful_delivery += 1
+                elif self.order_status[order_i] == -1:
+                    self.rewards[
+                        vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
+            if vehicle_action == 1 and self.vehicles_action_history[self._step_count-1][vehicle_i] == 1:
+                self.rewards[
+                    vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
+            if vehicle_action == 0 and self.vehicles_action_history[self._step_count-1][vehicle_i] == 0:
+                self.rewards[
+                    vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
+
+
 
     def get_stats(self):
         return {}
@@ -155,23 +196,24 @@ class DVRPEnv(Env):
         return self.get_obs_size()*self.n_agents
 
     def get_avail_actions(self):
-        avail_actions = [0] * self.get_total_actions()
-        avail_actions[0] = 1
-        avail_actions[1] = 1
-        for index, order_i in enumerate(self.order_status):
-            if order_i == 0:
-                avail_actions[index + 2] = 1
-        return avail_actions * self.n_agents
-        # return [[1] * self.get_total_actions()] * self.n_agents
+        # avail_actions = [0] * self.get_total_actions()
+        # avail_actions[0] = 1
+        # avail_actions[1] = 1
+        # for index, order_i in enumerate(self.order_status):
+        #     if order_i == 0:
+        #         avail_actions[index + 2] = 1
+        # return avail_actions * self.n_agents
+        return [[1] * self.get_total_actions()] * self.n_agents
 
     def get_avail_agent_actions(self, agent_id):
-        avail_actions = [0] * self.get_total_actions()
-        avail_actions[0] = 1
-        avail_actions[1] = 1
-        for index, order_i in enumerate(self.order_status):
-            if order_i == 0:
-                avail_actions[index+2] = 1
-        return avail_actions
+        # avail_actions = [0] * self.get_total_actions()
+        # avail_actions[0] = 1
+        # avail_actions[1] = 1
+        # for index, order_i in enumerate(self.order_status):
+        #     if order_i == 0:
+        #         avail_actions[index+2] = 1
+        # return avail_actions
+        return [1] * self.get_total_actions()
 
     def get_total_actions(self):
         return self.action_max
@@ -191,12 +233,15 @@ class DVRPEnv(Env):
         self.order_time = [-1] * self.n_orders
         self._total_appeared_orders = 0
         self.generated_orders = 0
+        self.current_order_id = -1
 
         # Vehicle parameters
         self.vehicles_action_history = []
         self.vehicles_pos = {_: (None, None) for _ in range(self.n_agents)}
         self._vehicle_dones = [False] * self.n_agents
         self._successful_delivery = 0
+        self._total_accepted_orders = 0
+        self._total_delivered_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
         self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
 
@@ -226,19 +271,56 @@ class DVRPEnv(Env):
             self.__update_vehicle_pos(vehicle_i, vehicle_action)
 
     def __update_vehicle_pos(self, vehicle_i, vehicle_action):
-        if vehicle_action == 1:  # return to depot: move one step towards depot location
+        if vehicle_action == 2:  # return to depot: move one step towards depot location
             self.__vehicle_to_depot(vehicle_i)
-        elif 2 <= vehicle_action <= self.action_max:  # deliver order i: move one step towards order i
-            order_i = vehicle_action - 2
-            if self.order_status[order_i] == 0:
+        elif 3 <= vehicle_action <= self.action_max:  # deliver order i: move one step towards order i
+            order_i = vehicle_action - 3
+            if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
                 self.__vehicle_to_order(vehicle_i, order_i)
+
+    def __update_action_1(self, vehicles_actions):
+        # IF MORE THAN ONE ACCEPT ORDERS, assign order to vehicles with minimum cost insertion
+        if vehicles_actions.count(1) > 1:
+            # penalise if no orders available to be accepted
+            if self.order_status.count(0) == 0:
+                for vehicle_i, vehicle_action in enumerate(vehicles_actions):
+                    if vehicle_action == 1:
+                        self.rewards[vehicle_i] -= self.invalid_action_penalty
+            # otherwise: assign the open order to cheapest vehicle
+            else:
+                cheapest_vehicle, new_order_i = self.__cheapest_insertion(
+                    vehicles_actions)  # returns the vehicle id and order id of cheapest insertion cost
+                for vehicle_i in range(self.n_agents):
+                    if vehicle_i == cheapest_vehicle:
+                        self.order_status[new_order_i] = 2
+                        self.order_vehicle[new_order_i] = cheapest_vehicle
+                        self.rewards[vehicle_i] += self.accept_reward
+                        self._total_accepted_orders += 1
+
+        # Using minimum cost insertion to decide between vehicles which accept same order (outputs: vehicle_i number)
+    def __cheapest_insertion(self, vehicles_action):
+        new_order_id = []
+        vehicles_insertion_cost = {}
+
+        return 0, self.current_order_id
 
     def __vehicle_to_order(self, vehicle_i, order_i):
         current_pos = self.vehicles_pos[vehicle_i]
         order_i_pos = self.orders_pos[order_i]
         if current_pos == order_i_pos:
-            self.order_status[order_i] = 1 #delivered
-        else:
+            self.order_status[order_i] = 2 #delivered
+            self.order_delivered[order_i] = vehicle_i
+            self.rewards[vehicle_i] += self.delivery_reward
+
+        # else: #if agent go through another order
+        #     for i, order in enumerate(self.orders_pos):
+        #         if current_pos == order:
+        #             self.order_status[i] = 1
+        #             self.rewards[
+        #                 vehicle_i] += self.delivery_reward
+
+
+
             self._vehicle_mileage[vehicle_i] += 1
             next_pos = (self.vehicle_paths[current_pos][order_i_pos][1][0],
                         self.vehicle_paths[current_pos][order_i_pos][1][1])
@@ -266,10 +348,13 @@ class DVRPEnv(Env):
         # Orders
         for idx, j in enumerate(self.order_status):
             if j != -1:
-                fill_cell_im(img, self.icon_pkg, self.orders_pos[idx], cell_size=CELL_SIZE)
+                if j != 1:
+                    fill_cell_im(img, self.icon_pkg, self.orders_pos[idx], cell_size=CELL_SIZE)
+                else:
+                    fill_cell_im(img, self.icon_delivered, self.orders_pos[idx], cell_size=CELL_SIZE)
         # img.show()
 
-        # self.images.append(img)
+        self.images.append(img)
         img = np.asarray(img)
         # img.save('gridworld.jpg', format='JPEG', subsampling=0, quality=100)
         from gym.envs.classic_control import rendering

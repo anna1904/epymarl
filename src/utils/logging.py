@@ -1,11 +1,12 @@
 from collections import defaultdict
 import logging
 import numpy as np
+from torch.utils.tensorboard import SummaryWriter
 
 class Logger:
     def __init__(self, console_logger):
         self.console_logger = console_logger
-
+        self.summary_writer = SummaryWriter()
         self.use_tb = False
         self.use_sacred = False
         self.use_hdf = False
@@ -14,9 +15,7 @@ class Logger:
 
     def setup_tb(self, directory_name):
         # Import here so it doesn't have to be installed if you don't use it
-        from tensorboard_logger import configure, log_value
-        configure(directory_name)
-        self.tb_logger = log_value
+        # from tensorboard_logger import configure, log_value
         self.use_tb = True
 
     def setup_sacred(self, sacred_run_dict):
@@ -28,7 +27,7 @@ class Logger:
         self.stats[key].append((t, value))
 
         if self.use_tb:
-            self.tb_logger(key, value, t)
+            self.summary_writer.add_scalar(key, value, t)
 
         if self.use_sacred and to_sacred:
             if key in self.sacred_info:

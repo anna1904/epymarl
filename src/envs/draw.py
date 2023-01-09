@@ -5,7 +5,7 @@ import os
 
 
 
-def draw_grid(rows, cols, cell_size=50, fill='black', line_color='black'):
+def draw_grid(rows, cols, cell_size=80, fill='grey', line_color='orange'):
     height = rows * cell_size
     width = cols * cell_size
     image = Image.new(mode='RGB', size=(width, height), color=fill)
