@@ -12,9 +12,9 @@ log_interval: 500 # Log summary of stats after every {} timesteps
 runner_log_interval: 500 # Log runner stats (not test stats) every {} timesteps
 learner_log_interval: 500 # Log training stats every {} timesteps
 t_max: 50000 # Stop running after this many timesteps
-save_model_interval: 500 # Save models after this many timesteps
-#checkpoint_path: "results/models/qmix_seed146371451_DVRPEnv-v0_2022-12-13 20:37:11.762063/"
-evaluate: False
+save_model_interval: 5000 # Save models after this many timesteps
+checkpoint_path: "results/models/qmix_seed560627715_DVRPEnv-v0_2023-01-10 19:03:15.619982/"
+evaluate: True
 
 
-save_model: False # Save the models to disk
+save_model: True # Save the models to disk

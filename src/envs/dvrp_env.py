@@ -22,6 +22,7 @@ from .draw import *
 # 0: Available
 # 1: Accepted
 # 2: Delivered
+#3: Rejected
 
 class DVRPEnv(Env):
     def __init__(self, n_agents = 2, episode_limit=50, expected_orders=4, grid_shape=(10, 10)):
@@ -53,6 +54,7 @@ class DVRPEnv(Env):
         self._successful_delivery = 0
         self._total_accepted_orders = 0
         self._total_delivered_orders = 0
+        self._total_rejected_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
         self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
 
@@ -151,16 +153,13 @@ class DVRPEnv(Env):
             if 3 <= vehicle_action <= self.action_max:
                 order_i = vehicle_action - 3
                 if self.order_status[order_i] == 1 and \
-                        self.vehicles_pos[vehicle_i] == self.orders_pos[order_i]:
+                        self.vehicles_pos[vehicle_i] == self.orders_pos[order_i] and self.order_vehicle[order_i] == vehicle_i:
                     self._total_delivered_orders += 1
                     self.rewards[vehicle_i] += self.delivery_reward  # give reward for successful delivery
                     self._successful_delivery += 1
                 elif self.order_status[order_i] == -1:
                     self.rewards[
                         vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
-            if vehicle_action == 1 and self.vehicles_action_history[self._step_count-1][vehicle_i] == 1:
-                self.rewards[
-                    vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
             if vehicle_action == 0 and self.vehicles_action_history[self._step_count-1][vehicle_i] == 0:
                 self.rewards[
                     vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
@@ -242,6 +241,7 @@ class DVRPEnv(Env):
         self._successful_delivery = 0
         self._total_accepted_orders = 0
         self._total_delivered_orders = 0
+        self._total_rejected_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
         self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
 
@@ -277,6 +277,10 @@ class DVRPEnv(Env):
             order_i = vehicle_action - 3
             if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
                 self.__vehicle_to_order(vehicle_i, order_i)
+            else:
+                self.rewards[
+                    vehicle_i] -= self.invalid_action_penalty  # give large penalty to vehicle for invalid action
+
 
     def __update_action_1(self, vehicles_actions):
         # IF MORE THAN ONE ACCEPT ORDERS, assign order to vehicles with minimum cost insertion
@@ -292,17 +296,46 @@ class DVRPEnv(Env):
                     vehicles_actions)  # returns the vehicle id and order id of cheapest insertion cost
                 for vehicle_i in range(self.n_agents):
                     if vehicle_i == cheapest_vehicle:
-                        self.order_status[new_order_i] = 2
+                        self.order_status[new_order_i] = 1
                         self.order_vehicle[new_order_i] = cheapest_vehicle
                         self.rewards[vehicle_i] += self.accept_reward
                         self._total_accepted_orders += 1
+
+        # IF ONLY ONE VEHICLE ACCEPT ORDER, assign the order to the only vehicle that accepted the order
+        elif vehicles_actions.count(1) == 1:
+            # penalise if no orders available to be accepted
+            if self.order_status.count(0) == 0:
+                for vehicle_i, vehicle_action in enumerate(vehicles_actions):
+                    if vehicle_action == 1:
+                        self.rewards[vehicle_i] -= self.invalid_action_penalty
+            # assign to the correct vehicle
+            else:
+                for vehicle_i, vehicle_action in enumerate(vehicles_actions):
+                    if vehicle_action == 1:  # accept new order
+                            for order_i, order_i_status in enumerate(self.order_status):
+                                if order_i_status == 0:  # correct order status
+                                    self.order_status[order_i] = 1  # assigned to vehicle
+                                    self.order_vehicle[order_i] = vehicle_i
+                                    self.rewards[vehicle_i] += self.accept_reward
+                                    self._total_accepted_orders += 1
+                        # update other open order status for other vehicles to 1 (assigned to other vehicles)
+
+        # Otherwise, order expires and becomes inactive again
+        else:
+            # check if there are any active orders
+            if self.order_status.count(0) > 0:
+                self._total_rejected_orders += 1
+                for vehicle_i in range(self.n_agents):
+                    for order_i in range(self.n_orders):
+                        if self.order_status[order_i] == 0:
+                            self.order_status[order_i] = 3
 
         # Using minimum cost insertion to decide between vehicles which accept same order (outputs: vehicle_i number)
     def __cheapest_insertion(self, vehicles_action):
         new_order_id = []
         vehicles_insertion_cost = {}
 
-        return 0, self.current_order_id
+        return random.randint(0,1), self.current_order_id
 
     def __vehicle_to_order(self, vehicle_i, order_i):
         current_pos = self.vehicles_pos[vehicle_i]
@@ -348,7 +381,7 @@ class DVRPEnv(Env):
         # Orders
         for idx, j in enumerate(self.order_status):
             if j != -1:
-                if j != 1:
+                if j != 2:
                     fill_cell_im(img, self.icon_pkg, self.orders_pos[idx], cell_size=CELL_SIZE)
                 else:
                     fill_cell_im(img, self.icon_delivered, self.orders_pos[idx], cell_size=CELL_SIZE)

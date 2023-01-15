@@ -89,4 +89,5 @@ def fill_cell_im(image, icon, pos, cell_size=None, fill='black', margin=0):
     # margin *= cell_size
     # x, y, x_dash, y_dash = row + margin, col + margin, row + cell_size - margin, col + cell_size - margin
     # ImageDraw.Draw(image).rectangle([(x, y), (x_dash, y_dash)], fill=fill)
-    image.paste(icon, (int(row)+1, int(col)+1), icon)
+    # image.paste(icon, (int(row)+1, int(col)+1), icon)
+    image.paste(icon, (int(row), int(col)), icon)
