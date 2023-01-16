@@ -161,9 +161,10 @@ class _GymmaWrapper(MultiAgentEnv):
 
     def get_avail_agent_actions(self, agent_id):
         """ Returns the available actions for agent_id """
-        valid = flatdim(self._env.action_space[agent_id]) * [1]
-        invalid = [0] * (self.longest_action_space.n - len(valid))
-        return valid + invalid
+        # valid = flatdim(self._env.action_space[agent_id]) * [1]
+        # invalid = [0] * (self.longest_action_space.n - len(valid))
+        # return valid + invalid
+        return self._env.get_avail_agent_actions(agent_id)
 
     def get_total_actions(self):
         """ Returns the total number of actions an agent could ever take """

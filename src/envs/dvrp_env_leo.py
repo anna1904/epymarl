@@ -10,7 +10,6 @@ from .utils import dijkstra_paths, fill_cell_im, draw_image
 import copy
 from .const import *
 from .draw import *
-from .sim_annel import *
 
 # ACTION:
 # 0: Wait (Do nothing)
@@ -21,14 +20,13 @@ from .sim_annel import *
 #ORDER STATUS:
 # -1: InACtive
 # 0: Available
-# 1: Accepted by this agent
-# 2: Accepted by another agent
-#3: Delivered
-#4: Rejected
+# 1: Accepted
+# 2: Delivered
+#3: Rejected
 
-class DVRPEnv(Env):
+class DVRPEnv_loe(Env):
     def __init__(self, n_agents = 2, episode_limit=50, expected_orders=4, grid_shape=(10, 10), generated_points = 20):
-        self.n_agents = n_agents 
+        self.n_agents = n_agents
         self._episode_length = episode_limit
         self._expected_orders = expected_orders
         self._generated_points = generated_points
@@ -96,28 +94,27 @@ class DVRPEnv(Env):
 
         # Create observation space
         self._obs_high = np.array([self.vehicle_x_max, self.vehicle_y_max] +
-                                  [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
-                                  [self.clock_max] +
-                                  [4] * self.n_orders)
+                                  [self.order_x_max, self.order_y_max] * self.n_orders + [self.clock_max])
+                                #   [self.order_time_max] * self.n_orders +
+                                  # [self.order_distance_max] +
+                                   #availability
+        self._obs_low = np.array([self.vehicle_x_min, self.vehicle_y_min] +
+                                 [self.order_x_min, self.order_y_min] * self.n_orders + [self.clock_min])
+                                #  [self.order_status_min] * self.n_orders +
+                                #  [self.order_time_min] * self.n_orders +
+                                 # [self.order_distance_min] +
 
-        self._obs_low = np.array([self.vehicle_x_max, self.vehicle_y_max] +
-                                  [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
-                                  [self.clock_max] +
-                                  [-1] * self.n_orders)
-                                 
         self.observation_space = MultiAgentObservationSpace(
             [spaces.Box(self._obs_low, self._obs_high) for _ in range(self.n_agents)])
 
-        self.action_max = 1 + 1 + 1 + self.n_orders  #do nothing, accept, depot, move to order
-
+        # self.action_max = 1 + 1 + 1 + self.n_orders#do nothing, accept order,  depot, move to order
+        self.action_max = 7 #do nothing, accept order, move to depot, move to order
 
         self.action_space = MultiAgentActionSpace([spaces.Discrete(self.action_max) for _ in range(self.n_agents)])
 
 
     def step(self, actions):
         vehicles_action = list(actions)
-        if (self._step_count == 0):
-            sim_annel_solve(np.array([(5,5), (6,7), (8,3), (3,6)]),  100, 0.9, 0.01, 1)
         self.vehicles_action_history.append(vehicles_action)
         self._step_count += 1
         self._clock += 1
@@ -142,11 +139,9 @@ class DVRPEnv(Env):
         if (self._clock < self.order_generation_window) and (self.generated_orders < self._expected_orders) and (self._clock % 10 == 1):
             order_x, order_y = self.__select_order()
             self.current_order_id = self.generated_orders
-
-            if self.order_status[self.current_order_id - 1] == 0:
-                self.order_status[self.current_order_id - 1] = 4
-
             order_i = self.current_order_id
+            # for order_i in range(self.n_orders):
+            #     if self.order_status[order_i] == -1:
             self.generated_orders += 1
             self.order_time[order_i] = self._clock
             self.orders_pos[order_i] = (order_x, order_y)
@@ -272,7 +267,7 @@ class DVRPEnv(Env):
 
     def __select_order(self):
         self._total_appeared_orders += 1
-        return self.points_locations[np.random.randint(0, self._generated_points)]
+        return self.points_locations[np.random.randint(0,self._generated_points)]
 
 
     def __init_vehicles(self):
@@ -344,97 +339,11 @@ class DVRPEnv(Env):
                             self.order_status[order_i] = 3
 
         # Using minimum cost insertion to decide between vehicles which accept same order (outputs: vehicle_i number)
-
-    def __calculate_TSP_distance(self, route):
-
-        # MLROSE METHOD (GENETIC ALGO)
-        # if len(route) < 1:
-        #     best_state = []
-        #     best_fitness = 0
-        # else:
-        #
-        #     # Initialise fitness function object using list of coordinates
-        #     fitness_coords = mlrose.TravellingSales(coords=route)
-        #     problem_fit = mlrose.TSPOpt(length=len(route), fitness_fn=fitness_coords, maximize=False)
-        #
-        #     # Solve problem using genetic algorithm
-        #     best_state, best_fitness = mlrose.genetic_alg(problem_fit, mutation_prob=0.2, max_attempts=100,
-        #                                                   random_state=2)
-        #
-        # return best_state, best_fitness
-
-        if len(route) <= 1:
-            best_state = []
-            best_fitness = 0
-        elif len(route) == 2:
-            best_state = [0, 1]
-            a = np.array(route[0])
-            b = np.array(route[1])
-            best_fitness = np.linalg.norm(a - b)
-        elif len(route) == 3:
-            best_state = [0, 1, 2]
-            a = np.array(route[0])
-            b = np.array(route[1])
-            c = np.array(route[2])
-            dist_ab = np.linalg.norm(a - b)
-            dist_bc = np.linalg.norm(b - c)
-            best_fitness = dist_ab + dist_bc
-        else:
-            order_xs = [x[0] for x in route]
-            order_ys = [y[1] for y in route]
-            solver = TSPSolver.from_data(xs=order_xs, ys=order_ys, norm="EUC_2D")
-            solution = solver.solve()
-            best_state = solution.tour
-            best_fitness = solution.optimal_value
-
-        return best_state, best_fitness
-
     def __cheapest_insertion(self, vehicles_action):
         new_order_id = []
-        vehicles_insertion_cost = []
+        vehicles_insertion_cost = {}
 
-        for vehicle_i, action in enumerate(vehicles_action):
-            # if vehicle is still in depot, then all assigned orders are included in route calculation
-            if action == 1 and self.vehicles_pos[vehicle_i] == self.depot_location:
-                old_route = [self.depot_location]
-                new_order = []
-                for order_i in range(self.n_orders):
-                    if self.order_status[order_i] == 2 and self.order_vehicle[order_i] == vehicle_i:
-                        old_route += [self.orders_pos[order_i]]
-                    if self.order_status[vehicle_i][order_i] == 0:
-                        new_order = self.orders_pos[order_i]
-                        new_order_id = order_i
-                new_route = old_route + [new_order]
-                _, old_route_distance = self.__calculate_TSP_distance(old_route)
-                _, new_route_distance = self.__calculate_TSP_distance(new_route)
-                insertion_cost = new_route_distance - old_route_distance
-                vehicles_insertion_cost[vehicle_i] = insertion_cost
-
-            # if vehicle is on journey, then only orders_status = 2 are included in route calculation
-            elif action == 1 and self.vehicles_pos[vehicle_i] != self.depot_location:
-                old_route = [self.depot_location]
-                new_order = []
-                for order_i in range(self.n_orders):
-                    if self.order_status[vehicle_i][order_i] == 2:
-                        old_route += [self.orders_pos[vehicle_i][order_i]]
-                    if self.order_status[vehicle_i][order_i] == 0:
-                        new_order = self.orders_pos[vehicle_i][order_i]
-                        new_order_id = order_i
-                new_route = old_route + [new_order]
-                _, old_route_distance = self.__calculate_TSP_distance(old_route)
-                _, new_route_distance = self.__calculate_TSP_distance(new_route)
-                insertion_cost = new_route_distance - old_route_distance
-                vehicles_insertion_cost[vehicle_i] = insertion_cost
-
-            # elif action==0:
-            #     continue
-            # else:
-            #     raise Exception('Something went wrong at __cheapest_insertion function')
-
-        # get the vehicle's id with the lowest insertion cost
-        assigned_vehicle_id = min(vehicles_insertion_cost, key=vehicles_insertion_cost.get)
-
-        return assigned_vehicle_id, new_order_id
+        return random.randint(0,1), self.current_order_id
 
     def __vehicle_to_order(self, vehicle_i, order_i):
         current_pos = self.vehicles_pos[vehicle_i]
@@ -524,6 +433,6 @@ class DVRPEnv(Env):
                     "n_agents": self.n_agents,
                     "episode_limit": self.episode_limit}
         return env_info
-        
+
 
 
