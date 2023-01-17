@@ -11,7 +11,6 @@ import copy
 from .const import *
 from .draw import *
 from .sim_annel import *
-from .cheapest_insertion import *
 
 # ACTION:
 # 0: Wait (Do nothing)
@@ -101,13 +100,11 @@ class DVRPEnv(Env):
                                   [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
                                   [self.clock_max] +
                                   [4] * self.n_orders)
-                                  # [self.vehicle_x_max, self.vehicle_y_max])
 
-        self._obs_low = np.array([self.vehicle_x_min, self.vehicle_y_min] +
-                                  [self.vehicle_x_min, self.vehicle_y_min] * self.n_orders +
-                                  [self.clock_min] +
+        self._obs_low = np.array([self.vehicle_x_max, self.vehicle_y_max] +
+                                  [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
+                                  [self.clock_max] +
                                   [-1] * self.n_orders)
-                                 # [self.vehicle_x_min, self.vehicle_y_max] #the last is the location to which agent is moving
                                  
         self.observation_space = MultiAgentObservationSpace(
             [spaces.Box(self._obs_low, self._obs_high) for _ in range(self.n_agents)])
@@ -124,7 +121,6 @@ class DVRPEnv(Env):
         self._step_count += 1
         self._clock += 1
         self.rewards = [0] * self.n_agents
-        cheapest_insertion(np.array([(4,5), (2,8), (1,1)]), np.array((6,8)))
 
         #no order available but vehicle drive there
 
@@ -191,7 +187,6 @@ class DVRPEnv(Env):
         return self._obs_high.shape[0]
 
     def get_state(self):
-
         _obs = []
 
         for vehicle_i in range(self.n_agents):
@@ -200,28 +195,31 @@ class DVRPEnv(Env):
             flat_list.extend([x[0] for x in self.orders_pos])
             flat_list.extend([y[1] for y in self.orders_pos])
             flat_list.extend([self._clock])
-            flat_list.extend(self.get_order_status(vehicle_i))
             _obs.append(flat_list)
         return _obs
-    def get_order_status(self, vehicle_i):
-        order_status_agent = copy.deepcopy(self.order_status)
-        for order in range(self.n_orders):
-            if self.order_status[order] == 1 and self.order_vehicle[order] == vehicle_i:
-                order_status_agent[order] == 1
-            else:
-                order_status_agent[order] == 2
-        return order_status_agent
 
     def get_state_size(self):
         return self.get_obs_size()*self.n_agents
 
+    def get_avail_actions(self):
+        # avail_actions = [0] * self.get_total_actions()
+        # avail_actions[0] = 1
+        # avail_actions[1] = 1
+        # for index, order_i in enumerate(self.order_status):
+        #     if order_i == 0:
+        #         avail_actions[index + 2] = 1
+        # return avail_actions * self.n_agents
+        return [0,1,0,1,0,1,0] * self.n_agents
+
     def get_avail_agent_actions(self, agent_id):
-        avail_actions = np.array([0] * self.get_total_actions())
-        avail_actions[0:2] = 1
-        for index, order_i in enumerate(self.order_status):
-            if order_i == 1 and self.order_vehicle[index] == agent_id:
-                avail_actions[index] = 1
-        return avail_actions
+        # avail_actions = [0] * self.get_total_actions()
+        # avail_actions[0] = 1
+        # avail_actions[1] = 1
+        # for index, order_i in enumerate(self.order_status):
+        #     if order_i == 0:
+        #         avail_actions[index+2] = 1
+        # return avail_actions
+        return [0,1,0,1,0,1,0]
 
     def get_total_actions(self):
         return self.action_max
@@ -253,7 +251,6 @@ class DVRPEnv(Env):
         self._total_rejected_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
         self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
-        self.vehicles_moving = [False for _ in range(self.n_agents)]
 
         self.__draw_base_img()
         self.images = [self._base_img]
@@ -344,7 +341,7 @@ class DVRPEnv(Env):
                 for vehicle_i in range(self.n_agents):
                     for order_i in range(self.n_orders):
                         if self.order_status[order_i] == 0:
-                            self.order_status[order_i] = 4
+                            self.order_status[order_i] = 3
 
         # Using minimum cost insertion to decide between vehicles which accept same order (outputs: vehicle_i number)
 
@@ -373,7 +370,7 @@ class DVRPEnv(Env):
 
     def __cheapest_insertion(self, vehicles_action):
         new_order_id = []
-        vehicles_insertion_cost = {}
+        vehicles_insertion_cost = []
 
         for vehicle_i, action in enumerate(vehicles_action):
             # if vehicle is still in depot, then all assigned orders are included in route calculation
@@ -381,9 +378,9 @@ class DVRPEnv(Env):
                 old_route = [self.depot_location]
                 new_order = []
                 for order_i in range(self.n_orders):
-                    if self.order_status[order_i] == 1 and self.order_vehicle[order_i] == vehicle_i:
+                    if self.order_status[order_i] == 2 and self.order_vehicle[order_i] == vehicle_i:
                         old_route += [self.orders_pos[order_i]]
-                    if self.order_status[order_i] == 0:
+                    if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
                         new_order = self.orders_pos[order_i]
                         new_order_id = order_i
                 new_route = old_route + [new_order]
@@ -397,9 +394,9 @@ class DVRPEnv(Env):
                 old_route = [self.depot_location]
                 new_order = []
                 for order_i in range(self.n_orders):
-                    if self.order_status[order_i] == 1 and self.order_vehicle[order_i] == vehicle_i:
+                    if self.order_status[order_i] == 2 and self.order_vehicle[order_i] == vehicle_i:
                         old_route += [self.orders_pos[order_i]]
-                    if self.order_status[order_i] == 0:
+                    if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
                         new_order = self.orders_pos[order_i]
                         new_order_id = order_i
                 new_route = old_route + [new_order]
@@ -416,7 +413,7 @@ class DVRPEnv(Env):
         current_pos = self.vehicles_pos[vehicle_i]
         order_i_pos = self.orders_pos[order_i]
         if current_pos == order_i_pos:
-            self.order_status[order_i] = 3 #delivered
+            self.order_status[order_i] = 2 #delivered
             self.vehicles_moving[vehicle_i] = False
             self.order_delivered[order_i] = vehicle_i
             self.rewards[vehicle_i] += self.delivery_reward

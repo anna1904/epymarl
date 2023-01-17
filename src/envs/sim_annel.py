@@ -42,9 +42,10 @@ def generate_solution(
 
 
 def sim_annel_solve(dataset, T, cooling_rate, T_lower_bound, tolerance):
-    current_solution = np.random.permutation(
-        range(len(dataset)))  # A random initial solution is created using city indexes
+    # current_solution = np.random.permutation(
+    #     range(len(dataset)))  # A random initial solution is created using city indexes #no need for random solution
     h = 0  # Keeps the number of iterations
+    current_solution = dataset
 
     while T > T_lower_bound:  # We want the algorithm to run when the temperature is greater than T_lower_bound
         h += 1
