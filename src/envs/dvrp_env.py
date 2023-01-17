@@ -347,47 +347,26 @@ class DVRPEnv(Env):
 
     def __calculate_TSP_distance(self, route):
 
-        # MLROSE METHOD (GENETIC ALGO)
-        # if len(route) < 1:
-        #     best_state = []
-        #     best_fitness = 0
-        # else:
-        #
-        #     # Initialise fitness function object using list of coordinates
-        #     fitness_coords = mlrose.TravellingSales(coords=route)
-        #     problem_fit = mlrose.TSPOpt(length=len(route), fitness_fn=fitness_coords, maximize=False)
-        #
-        #     # Solve problem using genetic algorithm
-        #     best_state, best_fitness = mlrose.genetic_alg(problem_fit, mutation_prob=0.2, max_attempts=100,
-        #                                                   random_state=2)
-        #
-        # return best_state, best_fitness
-
         if len(route) <= 1:
-            best_state = []
-            best_fitness = 0
+            best_route = []
+            best_cost = 0
         elif len(route) == 2:
-            best_state = [0, 1]
+            best_route = [0, 1]
             a = np.array(route[0])
             b = np.array(route[1])
-            best_fitness = np.linalg.norm(a - b)
+            best_cost = np.linalg.norm(a - b)
         elif len(route) == 3:
-            best_state = [0, 1, 2]
+            best_route = [0, 1, 2]
             a = np.array(route[0])
             b = np.array(route[1])
             c = np.array(route[2])
             dist_ab = np.linalg.norm(a - b)
             dist_bc = np.linalg.norm(b - c)
-            best_fitness = dist_ab + dist_bc
+            best_cost = dist_ab + dist_bc
         else:
-            order_xs = [x[0] for x in route]
-            order_ys = [y[1] for y in route]
-            solver = TSPSolver.from_data(xs=order_xs, ys=order_ys, norm="EUC_2D")
-            solution = solver.solve()
-            best_state = solution.tour
-            best_fitness = solution.optimal_value
+            best_route, best_cost = sim_annel_solve(np.array(route), 100, 0.9, 0.01, 1) #use sim annel with 87 iterations
 
-        return best_state, best_fitness
+        return best_route, best_cost
 
     def __cheapest_insertion(self, vehicles_action):
         new_order_id = []
@@ -401,7 +380,7 @@ class DVRPEnv(Env):
                 for order_i in range(self.n_orders):
                     if self.order_status[order_i] == 2 and self.order_vehicle[order_i] == vehicle_i:
                         old_route += [self.orders_pos[order_i]]
-                    if self.order_status[vehicle_i][order_i] == 0:
+                    if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
                         new_order = self.orders_pos[order_i]
                         new_order_id = order_i
                 new_route = old_route + [new_order]
@@ -415,10 +394,10 @@ class DVRPEnv(Env):
                 old_route = [self.depot_location]
                 new_order = []
                 for order_i in range(self.n_orders):
-                    if self.order_status[vehicle_i][order_i] == 2:
-                        old_route += [self.orders_pos[vehicle_i][order_i]]
-                    if self.order_status[vehicle_i][order_i] == 0:
-                        new_order = self.orders_pos[vehicle_i][order_i]
+                    if self.order_status[order_i] == 2 and self.order_vehicle[order_i] == vehicle_i:
+                        old_route += [self.orders_pos[order_i]]
+                    if self.order_status[order_i] == 0 and self.order_vehicle[order_i] == vehicle_i:
+                        new_order = self.orders_pos[order_i]
                         new_order_id = order_i
                 new_route = old_route + [new_order]
                 _, old_route_distance = self.__calculate_TSP_distance(old_route)

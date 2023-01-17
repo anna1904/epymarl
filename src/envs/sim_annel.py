@@ -15,8 +15,9 @@ np.random.seed(40)
 
 
 def calculate_distance(cities, solution):
-    solution_for_distance_calculation = np.append(solution, [solution[0]],
-                                                    axis=0)  # Appends the city index at the beginning of the solution array to the end of the array
+    # solution_for_distance_calculation = np.append(solution, [solution[0]],
+    #                                                 axis=0)  # Appends the city index at the beginning of the solution array to the end of the array
+    solution_for_distance_calculation = solution
     distance = 0
     next_city_index_founder = 0
 
@@ -69,18 +70,20 @@ def sim_annel_solve(dataset, T, cooling_rate, T_lower_bound, tolerance):
 
         T = T * cooling_rate  # The temperature is updated depending on the cooling rate
 
-        print("------------------------------")
-        print("Current solution: ")
-        print(np.append(current_solution, [current_solution[0]], axis=0))
-        print("Current distance: ")
-        print(current_distance)
+        # print("------------------------------")
+        # print("Current solution: ")
+        # print(current_solution)
+        # print("Current distance: ")
+        # print(current_distance)
 
-    print("--------RESULTS---------")
-    print("Best tour founded for salesman: ", np.append(current_solution, [current_solution[0]], axis=0))
-    print("Distance of tour founded: ", current_distance)
-    print("Iterations: ", h)
-    comp_time = time.time() - start_time  # Keeps the difference between the end time and the start time
-    print(f"-> Computational Time: {comp_time} seconds")  # Prints Computational Time
+    # print("--------RESULTS---------")
+    # # print("Best tour founded for salesman: ", np.append(current_solution, [current_solution[0]], axis=0))
+    # print("Best tour founded for salesman: ", current_solution)
+    # print("Distance of tour founded: ", current_distance)
+    # print("Iterations: ", h)
+    # comp_time = time.time() - start_time  # Keeps the difference between the end time and the start time
+    # print(f"-> Computational Time: {comp_time} seconds")  # Prints Computational Time
+    return current_solution, current_distance
 
 
 # sim_annel_solve(dataset, 100, 0.999, 0.01,
