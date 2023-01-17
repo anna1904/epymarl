@@ -6,7 +6,6 @@ def cheapest_insertion(tour, node):
     for i in range(len(tour)-1):
         dist_prev = np.linalg.norm(tour[i] - tour[i+1])
         dist_future = np.linalg.norm(tour[i] - node) + np.linalg.norm(tour[i+1] - node)
-        print(dist_prev, dist_future)
         if (dist_future - dist_prev) < min_cost:
             min_cost = dist_future - dist_prev
             min_index = i

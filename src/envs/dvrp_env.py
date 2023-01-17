@@ -124,7 +124,6 @@ class DVRPEnv(Env):
         self._step_count += 1
         self._clock += 1
         self.rewards = [0] * self.n_agents
-        cheapest_insertion(np.array([(4,5), (2,8), (1,1)]), np.array((6,8)))
 
         #no order available but vehicle drive there
 
@@ -354,22 +353,46 @@ class DVRPEnv(Env):
             best_route = []
             best_cost = 0
         elif len(route) == 2:
-            best_route = [0, 1]
+            best_route = route
             a = np.array(route[0])
             b = np.array(route[1])
             best_cost = np.linalg.norm(a - b)
-        elif len(route) == 3:
-            best_route = [0, 1, 2]
-            a = np.array(route[0])
-            b = np.array(route[1])
-            c = np.array(route[2])
-            dist_ab = np.linalg.norm(a - b)
-            dist_bc = np.linalg.norm(b - c)
-            best_cost = dist_ab + dist_bc
+        # elif len(route) == 3:
+        #     best_route = [0, 1, 2]
+        #     a = np.array(route[0])
+        #     b = np.array(route[1])
+        #     c = np.array(route[2])
+        #     dist_ab = np.linalg.norm(a - b)
+        #     dist_bc = np.linalg.norm(b - c)
+        #     best_cost = dist_ab + dist_bc
         else:
             best_route, best_cost = sim_annel_solve(np.array(route), 100, 0.9, 0.01, 1) #use sim annel with 87 iterations
 
         return best_route, best_cost
+
+    def __calculate_insertion_cost(self, route, node):
+
+        if len(route) <= 0:
+            updated_route = []
+            min_cost = 0
+            min_index = 0
+        # elif len(route) == 2:
+        #     best_route = route
+        #     a = np.array(route[0])
+        #     b = np.array(route[1])
+        #     best_cost = np.linalg.norm(a - b)
+        # elif len(route) == 3:
+        #     best_route = [0, 1, 2]
+        #     a = np.array(route[0])
+        #     b = np.array(route[1])
+        #     c = np.array(route[2])
+        #     dist_ab = np.linalg.norm(a - b)
+        #     dist_bc = np.linalg.norm(b - c)
+        #     best_cost = dist_ab + dist_bc
+        else:
+            updated_route, min_cost, min_index = cheapest_insertion(route,node) #use sim annel with 87 iterations
+
+        return updated_route, min_cost, min_index
 
     def __cheapest_insertion(self, vehicles_action):
         new_order_id = []
@@ -386,10 +409,8 @@ class DVRPEnv(Env):
                     if self.order_status[order_i] == 0:
                         new_order = self.orders_pos[order_i]
                         new_order_id = order_i
-                new_route = old_route + [new_order]
-                _, old_route_distance = self.__calculate_TSP_distance(old_route)
-                _, new_route_distance = self.__calculate_TSP_distance(new_route)
-                insertion_cost = new_route_distance - old_route_distance
+                route, old_route_distance = self.__calculate_TSP_distance(old_route)
+                _, insertion_cost, _ = self.__calculate_insertion_cost(np.array(route), np.array(new_order))
                 vehicles_insertion_cost[vehicle_i] = insertion_cost
 
             # if vehicle is on journey, then only orders_status = 2 are included in route calculation
@@ -402,10 +423,8 @@ class DVRPEnv(Env):
                     if self.order_status[order_i] == 0:
                         new_order = self.orders_pos[order_i]
                         new_order_id = order_i
-                new_route = old_route + [new_order]
-                _, old_route_distance = self.__calculate_TSP_distance(old_route)
-                _, new_route_distance = self.__calculate_TSP_distance(new_route)
-                insertion_cost = new_route_distance - old_route_distance
+                route, old_route_distance = self.__calculate_TSP_distance(old_route)
+                _, insertion_cost, _ = self.__calculate_insertion_cost(np.array(route), np.array(new_order))
                 vehicles_insertion_cost[vehicle_i] = insertion_cost
 
         assigned_vehicle_id = min(vehicles_insertion_cost, key=vehicles_insertion_cost.get)
