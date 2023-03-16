@@ -69,6 +69,7 @@ class EpisodeRunner:
             reward, terminated, env_info = self.env.step(actions[0])
             if test_mode:
                 self.env.render()
+
             episode_return += reward
 
             post_transition_data = {

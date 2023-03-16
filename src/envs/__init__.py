@@ -10,7 +10,7 @@ from gym.spaces import flatdim
 import numpy as np
 from gym.wrappers import TimeLimit as GymTimeLimit
 from gym.envs.registration import registry, register, make, spec
-from .dvrp_env import DVRPEnv
+from .vehicle_drones_env import DronesEnv
 
 def env_fn(env, **kwargs) -> MultiAgentEnv:
     return env(**kwargs)
@@ -22,8 +22,8 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
 #     )
 
 register(
-  id="DVRPEnv-v0",                     # Environment ID.
-  entry_point="envs.dvrp_env:DVRPEnv",  # The entry point for the environment class
+  id="DronesEnv-v0",                     # Environment ID.
+  entry_point="envs.vehicle_drones_env:DronesEnv",  # The entry point for the environment class
   # kwargs={
   #     "t_max":2000
   #   },

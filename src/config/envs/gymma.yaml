@@ -6,14 +6,14 @@ env_args:
   pretrained_wrapper: null
 
 test_greedy: True
-test_nepisode: 200
-test_interval: 200
-log_interval: 500 # Log summary of stats after every {} timesteps
-runner_log_interval: 500 # Log runner stats (not test stats) every {} timesteps
-learner_log_interval: 500 # Log training stats every {} timesteps
-t_max: 50000 # Stop running after this many timesteps
+test_nepisode: 500
+test_interval: 5000
+log_interval: 5000 # Log summary of stats after every {} timesteps
+runner_log_interval: 50 # Log runner stats (not test stats) every {} timesteps
+learner_log_interval: 50 # Log training stats every {} timesteps
+t_max: 500000 # Stop running after this many timesteps
 save_model_interval: 5000 # Save models after this many timesteps
-#checkpoint_path: "results/models/qmix_seed560627715_DVRPEnv-v0_2023-01-10 19:03:15.619982/"
+#checkpoint_path: "results/models/qmix_seed287395591_DVRPEnv-v0_2023-01-18 20:22:04.752063/"
 evaluate: False
 
 

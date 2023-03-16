@@ -13,44 +13,28 @@ from .draw import *
 from .sim_annel import *
 from .cheapest_insertion import *
 
-# ACTION:
-# 0: Wait (Do nothing)
-# 1 Accept the order
-# 2: Return to depot
-# 3: Deliver order i (by moving one step towards the respective delivery location)
 
-#ORDER STATUS:
-# -1: InACtive
-# 0: Available
-# 1: Accepted by this agent
-# 2: Accepted by another agent
-#3: Delivered
-#4: Rejected
 
-class DVRPEnv(Env):
-    def __init__(self, n_agents = 2, episode_limit=100, expected_orders=10, grid_shape=(10, 10), generated_points = 50):
+class DronesEnv(Env):
+    def __init__(self, n_agents = 1, n_vehicles = 1, n_drones = 1, episode_limit=100, expected_orders=10, grid_shape=(10, 10), generated_points = 50):
 
         np.random.seed(1) #random seed
 
-        self.n_agents = n_agents 
+        self.n_agents = n_agents
+        self.n_vehicles = n_vehicles
+        self.n_drones = n_drones
         self._episode_length = episode_limit
-        self._expected_orders = expected_orders
-        self._generated_points = generated_points
-        self._grid_shape = grid_shape  # size of grid or map
-        self.depot_location = (round(self._grid_shape[0] / 2), round(self._grid_shape[1] / 2))  # set at centre of map
-        self.points_locations = [(np.random.randint(grid_shape[0]), np.random.randint(grid_shape[1])) for _ in range(generated_points)]
+        self.n_orders = expected_orders
+
 
         #rewards
         self.invalid_action_penalty = 5
         self.delivery_reward = 2
-        self.accept_reward = 1
 
         # General parameters (changes throughout episode)
         self._vehicle_episode_rewards = [0 for _ in range(self.n_agents)]
         self._total_episode_rewards = 0
         self.rewards = [0] * self.n_agents
-
-        self.n_orders = int(expected_orders)
 
         self._step_count = 0
         self._clock = 0
@@ -60,11 +44,7 @@ class DVRPEnv(Env):
         self.vehicles_pos = {_: (None, None) for _ in range(self.n_agents)}
         self._vehicle_dones = [False] * self.n_agents
         self._successful_delivery = 0
-        self._total_accepted_orders = 0
-        self._total_delivered_orders = 0
-        self._total_rejected_orders = 0
         self._vehicle_mileage = [0] * self.n_agents
-        self.vehicle_paths, self.vehicle_path_lengths = dijkstra_paths(self._grid_shape[0], self._grid_shape[1])
         self.vehicles_moving = [False for _ in range(self.n_agents)]
 
         # Limits for observation space variables
@@ -79,19 +59,6 @@ class DVRPEnv(Env):
         self.order_y_max = self._grid_shape[0] - 1
         self.clock_max = self._episode_length
 
-        # Generate homogenous generation of orders throughout episode
-        self.order_generation_window = self._episode_length   # time when orders can appear
-        self.order_prob = self._expected_orders / self.order_generation_window  # set order probability such that the expected number of orders per day = total_orders
-        self.generated_orders = 0
-        self.current_order_id = -1
-
-        # Order parameters
-        self.orders_pos = [(-1, -1)] * self.n_orders
-        self.order_status = [-1] * self.n_orders
-        self.order_time = [-1] * self.n_orders
-        self.order_vehicle = [-1] * self.n_orders #number of agent which accept an order
-        self._total_appeared_orders = 0
-
         #Render parameters
         self.icon_av, _ = draw_image('rsz_1rsz_truck.png')
         self.icon_pkg, _ = draw_image('rsz_1pin.png')
@@ -100,20 +67,27 @@ class DVRPEnv(Env):
         self.images = False
 
         # Create observation space
-        self._obs_high = np.array([self.vehicle_x_max, self.vehicle_y_max] +
+        self._obs_high_vehicle = np.array([self.vehicle_x_max, self.vehicle_y_max] +
                                   [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
                                   [self.clock_max] +
-                                  [4] * self.n_orders)
-                                  # [self.vehicle_x_max, self.vehicle_y_max])
+                                  [True, True])
 
-        self._obs_low = np.array([self.vehicle_x_min, self.vehicle_y_min] +
+        self._obs_low_vehicle = np.array([self.vehicle_x_min, self.vehicle_y_min] +
                                   [self.vehicle_x_min, self.vehicle_y_min] * self.n_orders +
                                   [self.clock_min] +
-                                  [-1] * self.n_orders)
-                                 # [self.vehicle_x_min, self.vehicle_y_max] #the last is the location to which agent is moving
+                                  [False, False])
+        self._obs_high_drone = np.array([self.vehicle_x_max, self.vehicle_y_max] +
+                                          [self.vehicle_x_max, self.vehicle_y_max] * self.n_orders +
+                                          [self.clock_max])
+
+        self._obs_low_drone = np.array([self.vehicle_x_min, self.vehicle_y_min] +
+                                         [self.vehicle_x_min, self.vehicle_y_min] * self.n_orders +
+                                         [self.clock_min])
                                  
-        self.observation_space = MultiAgentObservationSpace(
-            [spaces.Box(self._obs_low, self._obs_high) for _ in range(self.n_agents)])
+        self.observation_space = MultiAgentObservationSpace(np.array(
+            [spaces.Box(self._obs_low_vehicle, self._obs_high_vehicle) for _ in range(self.n_vehicles)] +
+            [spaces.Box(self._obs_low_drone, self._obs_high_drone) for _ in range(self.n_drones)]
+        ))
 
         self.action_max = 1 + 1 + 1 + self.n_orders  #do nothing, accept, depot, move to order
 
@@ -128,13 +102,7 @@ class DVRPEnv(Env):
         self._clock += 1
         self.rewards = [0] * self.n_agents
 
-        #no order available but vehicle drive there
 
-        self.__update_action_1(vehicles_action)
-        self.__update_vehicles_pos(vehicles_action) #move either to depot, location
-        self.__update_rewards(vehicles_action) #give penalty a)to select unavailable order b) to stay in depot for next action
-        #post decision state new info came
-        self.__generate_orders()
 
         if self._clock >= self._episode_length or self.order_status.count(2) == self._expected_orders:
             for i in range(self.n_agents):
@@ -142,7 +110,7 @@ class DVRPEnv(Env):
 
         self._vehicle_episode_rewards = [a + b for a, b in zip(self._vehicle_episode_rewards, self.rewards)]
 
-        return self.get_state(), self.rewards, self._vehicle_dones, {'ongoing': True}
+        return [1], [1,1,1], {True, True, True}, {'ongoing': True}
 
     def __generate_orders(self):
         if (self._clock < self.order_generation_window) and (self.generated_orders < self._expected_orders) and (self._clock % 10 == 1):
