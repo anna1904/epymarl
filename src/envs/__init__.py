@@ -1,6 +1,6 @@
 from functools import partial
 import pretrained
-from smac.env import MultiAgentEnv, StarCraft2Env
+from smac.env import MultiAgentEnv
 import sys
 import os
 import gym
@@ -22,8 +22,8 @@ def env_fn(env, **kwargs) -> MultiAgentEnv:
 #     )
 
 register(
-  id="DronesEnv-v0",                     # Environment ID.
-  entry_point="envs.vehicle_drones_env:DronesEnv",  # The entry point for the environment class
+  id="BinaryKnapsackEnv-v0",                     # Environment ID.
+  entry_point="envs.knapsack_env:BinaryKnapsackEnv",  # The entry point for the environment class
   # kwargs={
   #     "t_max":2000
   #   },
@@ -100,7 +100,7 @@ class _GymmaWrapper(MultiAgentEnv):
         )
 
         self._seed = kwargs["seed"]
-        self._env.seed(self._seed)
+        # self._env.seed(self._seed)
 
     def step(self, actions):
         """ Returns reward, terminated, info """

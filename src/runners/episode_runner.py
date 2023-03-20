@@ -82,9 +82,11 @@ class EpisodeRunner:
 
             self.t += 1
         # self.env.close()
+        ones = np.ones(5, dtype=np.uint8)
         last_data = {
             "state": [self.env.get_state()],
-            "avail_actions": [self.env.get_avail_actions()],
+            # "avail_actions": [self.env.get_avail_actions()],
+            "avail_actions": [np.array(ones) for i in range(2)],
             "obs": [self.env.get_obs()]
         }
         self.batch.update(last_data, ts=self.t)
